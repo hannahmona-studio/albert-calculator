@@ -206,9 +206,9 @@ const speeches = {
 };
 
 const primeCharacters = [
-  { image: "a1.png", speeches: ["素数を発見しました！", "素数の謎も知りたいです！"] },
-  { image: "a.png", speeches: ["割り切れない気持ち、まさに素数…?", "素数にはタウマゼインを感じます"] },
-  { image: "r.png", speeches: ["自身と1でしか割れない孤高の数...", "自身と1でしか割れない孤高の数..."] }
+  { image: "a1.png", speeches: ["すごーい！素数を発見しました！", "これは割り切れない特別な数「素数」です！"] },
+  { image: "a.png", speeches: ["素数ですね！神秘的な数字です！", "自分と1でしか割れない孤高の数...素数！"] },
+  { image: "r.png", speeches: ["素数検出！ナイス計算です！", "素数発見！今日はいいことありそうです！"] }
 ];
 
 function isPrime(num) {
@@ -248,37 +248,80 @@ function deleteLast() {
   }
 }
 
+// ★セキュリティ制限を受けない「純粋な安全計算エンジン」
+function safeCalculateExpr(expr) {
+  // 数値と演算子に分割
+  const tokens = expr.match(/(\d+\.?\d*|[\+\-\*\/])/g);
+  if (!tokens) return NaN;
+
+  // 1乗算・除算の計算
+  const intermediate = [];
+  let i = 0;
+  while (i < tokens.length) {
+    const token = tokens[i];
+    if (token === '*' || token === '/') {
+      const prev = parseFloat(intermediate.pop());
+      const next = parseFloat(tokens[i + 1]);
+      if (isNaN(prev) || isNaN(next)) return NaN;
+      const res = token === '*' ? prev * next : prev / next;
+      intermediate.push(res);
+      i += 2;
+    } else {
+      intermediate.push(token);
+      i++;
+    }
+  }
+
+  // 2加算・減算の計算
+  let total = parseFloat(intermediate[0]);
+  if (isNaN(total)) return NaN;
+
+  for (let j = 1; j < intermediate.length; j += 2) {
+    const op = intermediate[j];
+    const val = parseFloat(intermediate[j + 1]);
+    if (isNaN(val)) return NaN;
+    if (op === '+') total += val;
+    if (op === '-') total -= val;
+  }
+
+  return total;
+}
+
 function calculate() {
   try {
     if (!current || /[\+\-\*\/]$/.test(current)) return;
 
-    // 安全な計算処理
+    // 計算の実行
     const expr = current.replace(/×/g, "*").replace(/÷/g, "/");
-    const result = Function('"use strict";return (' + expr + ')')();
+    const result = safeCalculateExpr(expr);
     
     if (result === undefined || isNaN(result) || !isFinite(result)) {
       throw new Error("Invalid");
     }
 
-    document.getElementById("display").textContent = result;
-    current = result.toString();
+    // 計算結果の整形（小数の誤差防止）
+    const roundedResult = Math.round(result * 100000000) / 100000000;
 
-    if (isPrime(result)) {
+    document.getElementById("display").textContent = roundedResult;
+    current = roundedResult.toString();
+
+    // 素数判定
+    if (isPrime(roundedResult)) {
       const charData = primeCharacters[Math.floor(Math.random() * primeCharacters.length)];
       const speechText = charData.speeches[Math.floor(Math.random() * charData.speeches.length)];
-      document.getElementById("speech").textContent = `${result} 、 ${speechText}`;
+      document.getElementById("speech").textContent = `${roundedResult} は ${speechText}`;
       changeCharacter(charData.image);
     } else {
-      document.getElementById("speech").textContent = `は ${result} です！`;
+      document.getElementById("speech").textContent = `答えは ${roundedResult} です！`;
       changeCharacter("a3.png");
     }
   } catch (err) {
-    document.getElementById("speech").textContent = "あっ!間違えちゃった！";
-    changeCharacter("a3.png");
+    document.getElementById("speech").textContent = "計算エラーです！";
+    changeCharacter("a2.png");
   }
 }
 
-// Service worker（sw.js）
+// サービスワーカー（sw.js）の登録
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
