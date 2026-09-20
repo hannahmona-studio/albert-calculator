@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>アル君☆電卓</title>
   
-  <!-- PWA 用メタタグ -->
   <meta name="theme-color" content="#e0dad1">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -45,7 +44,7 @@
       object-fit: contain;
       display: block;
       margin: 10px auto 0;
-      transition: transform 0.2s ease, opacity 0.25s ease;
+      transition: transform 0.2s ease;
     }
 
     .character.bounce {
@@ -127,7 +126,6 @@
       justify-content: center;
       padding-top: 6px;
       
-      /* Star-shaped mask */
       -webkit-mask-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 5 L61 35 L95 38 L70 60 L78 95 L50 78 L22 95 L30 60 L5 38 L39 35 Z'/%3E%3C/svg%3E");
       mask-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 5 L61 35 L95 38 L70 60 L78 95 L50 78 L22 95 L30 60 L5 38 L39 35 Z'/%3E%3C/svg%3E");
       -webkit-mask-size: contain;
@@ -138,12 +136,11 @@
       mask-position: center;
       
       filter: drop-shadow(0 3px 0 #ff69b4);
-      transition: transform 0.1s ease, filter 0.1s ease;
+      transition: transform 0.1s ease;
     }
 
     .buttons button:active {
       transform: translateY(2px);
-      filter: drop-shadow(0 1px 0 #ff1493);
     }
 
     .buttons .empty-slot {
@@ -156,7 +153,7 @@
 <body>
 
 <div class="calculator-container">
-  <img src="a1.png" alt="chara" class="character" id="character-img">
+  <img src="a1.png" alt="chara" class="character" id="character-img" onerror="this.style.opacity='0.3'">
   
   <div class="speech-bubble" id="speech">式を入力してください！</div>
   
@@ -194,7 +191,6 @@
 function changeCharacter(imageSrc) {
   const img = document.getElementById("character-img");
   img.src = imageSrc;
-
   img.classList.remove("bounce");
   void img.offsetWidth;
   img.classList.add("bounce");
@@ -202,56 +198,17 @@ function changeCharacter(imageSrc) {
 
 let current = "";
 
-const characterImages = {
-  "default": "a1.png",
-  "input": "a2.png"
-};
-
 const speeches = {
-  "0": "ゼロ！",
-  "1": "いち！",
-  "2": "に！",
-  "3": "さん！",
-  "4": "よん！",
-  "5": "ご！",
-  "6": "ろく！",
-  "7": "なな！",
-  "8": "はち！",
-  "9": "きゅう！",
-  ".": "てん！",
-  "+": "たす！",
-  "-": "ひく！",
-  "*": "かける！",
-  "/": "わる！",
-  "clear": "宇宙の神秘に迫ります！",
-  "default": "もっと計算したいです！"
+  "0": "ゼロ！", "1": "いち！", "2": "に！", "3": "さん！", "4": "よん！",
+  "5": "ご！", "6": "ろく！", "7": "なな！", "8": "はち！", "9": "きゅう！",
+  ".": "てん！", "+": "たす！", "-": "ひく！", "*": "かける！", "/": "わる！",
+  "clear": "宇宙の神秘に迫ります！", "default": "もっと計算したいです！"
 };
 
 const primeCharacters = [
-  {
-    image: "a1.png",
-    speeches: [
-      "素数発見！",
-      "割り切れない特別な数ですね！",
-      "素数の謎も知りたいです！"
-    ]
-  },
-  {
-    image: "a.png",
-    speeches: [
-      "素数の煌めきにも迫りたいです",
-      "割り切れない気持ち、まさに素数…?",
-      "素数にはタウマゼインを感じます"
-    ]
-  },
-  {
-    image: "r.png",
-    speeches: [
-      "自身と1でしか割れない孤高の数...",
-      "素数は星の謎にも通じているかもね",
-      "素数…今日はいいことがあるかな?"
-    ]
-  }
+  { image: "a1.png", speeches: ["素数を発見しました！", "素数の謎も知りたいです！"] },
+  { image: "a.png", speeches: ["割り切れない気持ち、まさに素数…?", "素数にはタウマゼインを感じます"] },
+  { image: "r.png", speeches: ["自身と1でしか割れない孤高の数...", "自身と1でしか割れない孤高の数..."] }
 ];
 
 function isPrime(num) {
@@ -267,21 +224,19 @@ function isPrime(num) {
 function input(value) {
   if (value === '.') {
     const parts = current.split(/[\+\-\*\/]/);
-    const lastPart = parts[parts.length - 1];
-    if (lastPart.includes('.')) return;
+    if (parts[parts.length - 1].includes('.')) return;
   }
-
   current += value;
   document.getElementById("display").textContent = current;
   document.getElementById("speech").textContent = speeches[value] || speeches.default;
-  changeCharacter(characterImages.input);
+  changeCharacter("a2.png");
 }
 
 function clearDisplay() {
   current = "";
   document.getElementById("display").textContent = "0";
   document.getElementById("speech").textContent = speeches.clear;
-  changeCharacter(characterImages.default);
+  changeCharacter("a1.png");
 }
 
 function deleteLast() {
@@ -289,85 +244,46 @@ function deleteLast() {
     current = current.slice(0, -1);
     document.getElementById("display").textContent = current || "0";
     document.getElementById("speech").textContent = "1つ消しました！";
-    changeCharacter(characterImages.input);
+    changeCharacter("a2.png");
   }
-}
-
-// ★Safe computation execution function（Parse & calculate without using eval）
-function safeEval(fn) {
-  return new Function('return ' + fn)();
 }
 
 function calculate() {
   try {
-    if (!current) return;
-    
-    // Do not calculate if the expression ends with an operator
-    if (/[\+\-\*\/]$/.test(current)) return;
+    if (!current || /[\+\-\*\/]$/.test(current)) return;
 
-    // Execute calculation
+    // 安全な計算処理
     const expr = current.replace(/×/g, "*").replace(/÷/g, "/");
-    const result = safeEval(expr);
+    const result = Function('"use strict";return (' + expr + ')')();
     
     if (result === undefined || isNaN(result) || !isFinite(result)) {
-      throw new Error("Invalid result");
+      throw new Error("Invalid");
     }
 
     document.getElementById("display").textContent = result;
     current = result.toString();
 
     if (isPrime(result)) {
-      const randomChar = primeCharacters[Math.floor(Math.random() * primeCharacters.length)];
-      const randomSpeech = randomChar.speeches[Math.floor(Math.random() * randomChar.speeches.length)];
-
-      document.getElementById("speech").textContent = `${result} 、 ${randomSpeech}`;
-      changeCharacter(randomChar.image);
+      const charData = primeCharacters[Math.floor(Math.random() * primeCharacters.length)];
+      const speechText = charData.speeches[Math.floor(Math.random() * charData.speeches.length)];
+      document.getElementById("speech").textContent = `${result} 、 ${speechText}`;
+      changeCharacter(charData.image);
     } else {
       document.getElementById("speech").textContent = `は ${result} です！`;
       changeCharacter("a3.png");
     }
-
   } catch (err) {
-    document.getElementById("speech").textContent = "あっ!エラーです!";
+    document.getElementById("speech").textContent = "あっ!間違えちゃった！";
     changeCharacter("a3.png");
   }
 }
 
-// Offline（Service Worker）Cache Refresh
+// Service worker（sw.js）
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    const swCode = `
-      const CACHE_NAME = 'calc-app-v4';
-      self.addEventListener('install', (e) => {
-        e.waitUntil(self.skipWaiting());
-      });
-      self.addEventListener('activate', (e) => {
-        e.waitUntil(
-          caches.keys().then((keys) => {
-            return Promise.all(
-              keys.map((key) => {
-                if (key !== CACHE_NAME) return caches.delete(key);
-              })
-            );
-          }).then(() => self.clients.claim())
-        );
-      });
-      self.addEventListener('fetch', (e) => {
-        e.respondWith(
-          caches.match(e.request).then((response) => {
-            return response || fetch(e.request).then((netRes) => {
-              return caches.open(CACHE_NAME).then((cache) => {
-                cache.put(e.request, netRes.clone());
-                return netRes;
-              });
-            });
-          }).catch(() => caches.match(e.request))
-        );
-      });
-    `;
-    const blob = new Blob([swCode], { type: 'text/javascript' });
-    const swUrl = URL.createObjectURL(blob);
-    navigator.serviceWorker.register(swUrl).catch(err => console.log('SW setup error:', err));
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('SW Registered'))
+      .catch(err => console.log('SW Register Error', err));
   });
 }
 </script>
