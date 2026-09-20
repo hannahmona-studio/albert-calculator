@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>アル君☆電卓</title>
   
-  <!-- PWA (Meta tags for "Add to Home Screen" & offline support -->
+  <!-- PWA 用メタタグ -->
   <meta name="theme-color" content="#e0dad1">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -19,32 +19,24 @@
       touch-action: manipulation;
     }
 
-body {
-  font-family: "Comic Sans MS", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
-  
-  /* ★background */
-  background-image: url("p.png"); /* image file name */
-  background-repeat: repeat;                     /* Tile the image repeatedly both horizontally & vertically */
-  background-position: top left;                 /* Positioned based on the top-left corner */
-  background-size: 512px 512px;                  /* Display size of a single pattern on the screen */
-  background-color: #efece5;                     /* Base color used before an image loads or as the background color（Dark colors that suit zodiac etc） */
+    body {
+      font-family: "Comic Sans MS", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      background: #e0dad1;
+      text-align: center;
+      margin: 0;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
 
-  text-align: center;
-  margin: 0;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-}
-
-    .calculator-container  {
+    .calculator-container {
       width: 100%;
       max-width: 360px;
       margin: 0 auto;
-
-}
+    }
 
     .character {
       width: 180px;
@@ -121,45 +113,39 @@ body {
       margin: 0 auto;
     }
 
-.buttons button {
-  width: 100%;
-  aspect-ratio: 1;
-  font-size: 22px;
-  font-weight: bold;
-  border: none;
-  background-color: #744847;
-  color: white;
-  cursor: pointer;
-
-  /* ★Vertical and horizontal centering settings */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  /* ★Character position adjustment：Increasing the top （padding-top） the text down */
-  padding-top: 10px; /* ← 8px〜14px Adjust using values */
-  padding-bottom: 0;
-
-  /* Star-shaped mask settings */
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 5 L61 35 L95 38 L70 60 L78 95 L50 78 L22 95 L30 60 L5 38 L39 35 Z'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 5 L61 35 L95 38 L70 60 L78 95 L50 78 L22 95 L30 60 L5 38 L39 35 Z'/%3E%3C/svg%3E");
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  
-  filter: drop-shadow(0 3px 0 #ff69b4);
-  transition: transform 0.1s ease, filter 0.1s ease;
-}
+    .buttons button {
+      width: 100%;
+      aspect-ratio: 1;
+      font-size: 20px;
+      font-weight: bold;
+      border: none;
+      background-color: #744847;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 6px;
+      
+      /* Star-shaped mask */
+      -webkit-mask-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 5 L61 35 L95 38 L70 60 L78 95 L50 78 L22 95 L30 60 L5 38 L39 35 Z'/%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 5 L61 35 L95 38 L70 60 L78 95 L50 78 L22 95 L30 60 L5 38 L39 35 Z'/%3E%3C/svg%3E");
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      
+      filter: drop-shadow(0 3px 0 #ff69b4);
+      transition: transform 0.1s ease, filter 0.1s ease;
+    }
 
     .buttons button:active {
       transform: translateY(2px);
       filter: drop-shadow(0 1px 0 #ff1493);
     }
 
-    /* Transparent dummy element for maintaining layout uniformity */
     .buttons .empty-slot {
       width: 100%;
       aspect-ratio: 1;
@@ -176,52 +162,46 @@ body {
   
   <div class="display" id="display">0</div>
   
-<div class="buttons">
-  <!-- Line 1: +, -, ÷, × -->
-  <button onclick="input('+')">+</button>
-  <button onclick="input('-')">-</button>
-  <button onclick="input('/')">÷</button>
-  <button onclick="input('*')">×</button>
-  
-  <!-- Line 2: 7, 8, 9, C -->
-  <button onclick="input('7')">7</button>
-  <button onclick="input('8')">8</button>
-  <button onclick="input('9')">9</button>
-  <button onclick="clearDisplay()">C</button>
-  
-  <!-- Line 3: 4, 5, 6, BS -->
-  <button onclick="input('4')">4</button>
-  <button onclick="input('5')">5</button>
-  <button onclick="input('6')">6</button>
-  <button onclick="deleteLast()">BS</button>
-  
-  <!-- Line 4: 1, 2, 3, = -->
-  <button onclick="input('1')">1</button>
-  <button onclick="input('2')">2</button>
-  <button onclick="input('3')">3</button>
-  <button onclick="calculate()">=</button>
-  
-  <!-- Line 5: 0, ., blank, blank -->
-  <button onclick="input('0')">0</button>
-  <button onclick="input('.')">.</button>
-  <div class="empty-slot"></div>
-  <div class="empty-slot"></div>
+  <div class="buttons">
+    <button onclick="input('+')">+</button>
+    <button onclick="input('-')">-</button>
+    <button onclick="input('/')">÷</button>
+    <button onclick="input('*')">×</button>
+    
+    <button onclick="input('7')">7</button>
+    <button onclick="input('8')">8</button>
+    <button onclick="input('9')">9</button>
+    <button onclick="clearDisplay()">C</button>
+    
+    <button onclick="input('4')">4</button>
+    <button onclick="input('5')">5</button>
+    <button onclick="input('6')">6</button>
+    <button onclick="deleteLast()">BS</button>
+    
+    <button onclick="input('1')">1</button>
+    <button onclick="input('2')">2</button>
+    <button onclick="input('3')">3</button>
+    <button onclick="calculate()">=</button>
+    
+    <button onclick="input('0')">0</button>
+    <button onclick="input('.')">.</button>
+    <div class="empty-slot"></div>
+    <div class="empty-slot"></div>
+  </div>
 </div>
 
 <script>
-// character image・animation
 function changeCharacter(imageSrc) {
   const img = document.getElementById("character-img");
   img.src = imageSrc;
 
   img.classList.remove("bounce");
-  void img.offsetWidth; // Animation reset caused by reflow
+  void img.offsetWidth;
   img.classList.add("bounce");
 }
 
 let current = "";
 
-// Settings for standard input
 const characterImages = {
   "default": "a1.png",
   "input": "a2.png"
@@ -243,19 +223,16 @@ const speeches = {
   "-": "ひく！",
   "*": "かける！",
   "/": "わる！",
-  ".": "てん！",
-  "bs": "1つ消しました！", 
   "clear": "宇宙の神秘に迫ります！",
   "default": "もっと計算したいです！"
 };
 
-// Character for primality testing＆lines（3 image）
 const primeCharacters = [
   {
     image: "a1.png",
     speeches: [
       "素数発見！",
-      "これは…割り切れない特別な数ですね！",
+      "割り切れない特別な数ですね！",
       "素数の謎も知りたいです！"
     ]
   },
@@ -277,7 +254,6 @@ const primeCharacters = [
   }
 ];
 
-// A function to check whether a number is prime
 function isPrime(num) {
   if (num <= 1 || !Number.isInteger(num)) return false;
   if (num === 2) return true;
@@ -288,9 +264,7 @@ function isPrime(num) {
   return true;
 }
 
-// Input processing
 function input(value) {
-  // Preventing duplicate decimal point entry
   if (value === '.') {
     const parts = current.split(/[\+\-\*\/]/);
     const lastPart = parts[parts.length - 1];
@@ -303,7 +277,6 @@ function input(value) {
   changeCharacter(characterImages.input);
 }
 
-// Clear processing
 function clearDisplay() {
   current = "";
   document.getElementById("display").textContent = "0";
@@ -311,12 +284,35 @@ function clearDisplay() {
   changeCharacter(characterImages.default);
 }
 
-// Calculation execution process
+function deleteLast() {
+  if (current.length > 0) {
+    current = current.slice(0, -1);
+    document.getElementById("display").textContent = current || "0";
+    document.getElementById("speech").textContent = "1つ消しました！";
+    changeCharacter(characterImages.input);
+  }
+}
+
+// ★Safe computation execution function（Parse & calculate without using eval）
+function safeEval(fn) {
+  return new Function('return ' + fn)();
+}
+
 function calculate() {
   try {
     if (!current) return;
-    const result = eval(current.replace("×", "*").replace("÷", "/"));
     
+    // Do not calculate if the expression ends with an operator
+    if (/[\+\-\*\/]$/.test(current)) return;
+
+    // Execute calculation
+    const expr = current.replace(/×/g, "*").replace(/÷/g, "/");
+    const result = safeEval(expr);
+    
+    if (result === undefined || isNaN(result) || !isFinite(result)) {
+      throw new Error("Invalid result");
+    }
+
     document.getElementById("display").textContent = result;
     current = result.toString();
 
@@ -324,20 +320,20 @@ function calculate() {
       const randomChar = primeCharacters[Math.floor(Math.random() * primeCharacters.length)];
       const randomSpeech = randomChar.speeches[Math.floor(Math.random() * randomChar.speeches.length)];
 
-      document.getElementById("speech").textContent = `${result}、 ${randomSpeech}`;
+      document.getElementById("speech").textContent = `${result} は ${randomSpeech}`;
       changeCharacter(randomChar.image);
     } else {
       document.getElementById("speech").textContent = `は ${result} です！`;
       changeCharacter("a3.png");
     }
 
-  } catch {
+  } catch (err) {
     document.getElementById("speech").textContent = "あっ!エラーです!";
-    changeCharacter("a2.png");
+    changeCharacter("a3.png");
   }
 }
 
-// offline（Service Worker）registration script
+// Offline（Service Worker）Cache Refresh
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     const swCode = `
@@ -346,7 +342,15 @@ if ('serviceWorker' in navigator) {
         e.waitUntil(self.skipWaiting());
       });
       self.addEventListener('activate', (e) => {
-        e.waitUntil(self.clients.claim());
+        e.waitUntil(
+          caches.keys().then((keys) => {
+            return Promise.all(
+              keys.map((key) => {
+                if (key !== CACHE_NAME) return caches.delete(key);
+              })
+            );
+          }).then(() => self.clients.claim())
+        );
       });
       self.addEventListener('fetch', (e) => {
         e.respondWith(
@@ -366,20 +370,6 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register(swUrl).catch(err => console.log('SW setup error:', err));
   });
 }
-
-// back space
-function deleteLast() {
-  if (current.length > 0) {
-    // Remove the last word of the string
-    current = current.slice(0, -1);
-    
-    // Refresh the screen after deletion,（Display "0" when empty）
-    document.getElementById("display").textContent = current || "0";
-    document.getElementById("speech").textContent = "1つ消しました！";
-    changeCharacter(characterImages.input);
-  }
-}
-
 </script>
 </body>
 </html>
