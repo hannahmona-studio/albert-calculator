@@ -320,7 +320,7 @@ function calculate() {
       const randomChar = primeCharacters[Math.floor(Math.random() * primeCharacters.length)];
       const randomSpeech = randomChar.speeches[Math.floor(Math.random() * randomChar.speeches.length)];
 
-      document.getElementById("speech").textContent = `${result} は ${randomSpeech}`;
+      document.getElementById("speech").textContent = `${result} 、 ${randomSpeech}`;
       changeCharacter(randomChar.image);
     } else {
       document.getElementById("speech").textContent = `は ${result} です！`;
