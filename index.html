@@ -1,0 +1,385 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>アル君☆電卓</title>
+  
+  <!-- PWA (Meta tags for "Add to Home Screen" & offline support -->
+  <meta name="theme-color" content="#e0dad1">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="アル君電卓">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+body {
+  font-family: "Comic Sans MS", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+  
+  /* ★background */
+  background-image: url("p.png"); /* image file name */
+  background-repeat: repeat;                     /* Tile the image repeatedly both horizontally & vertically */
+  background-position: top left;                 /* Positioned based on the top-left corner */
+  background-size: 512px 512px;                  /* Display size of a single pattern on the screen */
+  background-color: #efece5;                     /* Base color used before an image loads or as the background color（Dark colors that suit zodiac etc） */
+
+  text-align: center;
+  margin: 0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+    .calculator-container  {
+      width: 100%;
+      max-width: 360px;
+      margin: 0 auto;
+
+}
+
+    .character {
+      width: 180px;
+      max-width: 60vw;
+      height: 180px;
+      object-fit: contain;
+      display: block;
+      margin: 10px auto 0;
+      transition: transform 0.2s ease, opacity 0.25s ease;
+    }
+
+    .character.bounce {
+      animation: bounce 0.4s ease;
+    }
+
+    @keyframes bounce {
+      0%   { transform: scale(1); }
+      30%  { transform: scale(1.08); }
+      50%  { transform: scale(0.95); }
+      70%  { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+
+    .speech-bubble {
+      background: white;
+      border: 3px solid #744847;
+      border-radius: 20px;
+      padding: 12px 15px;
+      margin: 10px auto;
+      width: 90%;
+      max-width: 300px;
+      position: relative;
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      word-break: break-all;
+    }
+
+    .speech-bubble::after {
+      content: "";
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 9px solid transparent;
+      border-bottom-color: white;
+    }
+
+    .display {
+      font-size: 28px;
+      margin: 10px auto 15px;
+      padding: 10px 15px;
+      background: #fff;
+      border: 2px solid #744847;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 300px;
+      text-align: right;
+      overflow-x: auto;
+      white-space: nowrap;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      width: 90%;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+.buttons button {
+  width: 100%;
+  aspect-ratio: 1;
+  font-size: 22px;
+  font-weight: bold;
+  border: none;
+  background-color: #744847;
+  color: white;
+  cursor: pointer;
+
+  /* ★Vertical and horizontal centering settings */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* ★Character position adjustment：Increasing the top （padding-top） the text down */
+  padding-top: 10px; /* ← 8px〜14px Adjust using values */
+  padding-bottom: 0;
+
+  /* Star-shaped mask settings */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 5 L61 35 L95 38 L70 60 L78 95 L50 78 L22 95 L30 60 L5 38 L39 35 Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 5 L61 35 L95 38 L70 60 L78 95 L50 78 L22 95 L30 60 L5 38 L39 35 Z'/%3E%3C/svg%3E");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  
+  filter: drop-shadow(0 3px 0 #ff69b4);
+  transition: transform 0.1s ease, filter 0.1s ease;
+}
+
+    .buttons button:active {
+      transform: translateY(2px);
+      filter: drop-shadow(0 1px 0 #ff1493);
+    }
+
+    /* Transparent dummy element for maintaining layout uniformity */
+    .buttons .empty-slot {
+      width: 100%;
+      aspect-ratio: 1;
+      visibility: hidden;
+    }
+  </style>
+</head>
+<body>
+
+<div class="calculator-container">
+  <img src="a1.png" alt="chara" class="character" id="character-img">
+  
+  <div class="speech-bubble" id="speech">式を入力してください！</div>
+  
+  <div class="display" id="display">0</div>
+  
+<div class="buttons">
+  <!-- Line 1: +, -, ÷, × -->
+  <button onclick="input('+')">+</button>
+  <button onclick="input('-')">-</button>
+  <button onclick="input('/')">÷</button>
+  <button onclick="input('*')">×</button>
+  
+  <!-- Line 2: 7, 8, 9, C -->
+  <button onclick="input('7')">7</button>
+  <button onclick="input('8')">8</button>
+  <button onclick="input('9')">9</button>
+  <button onclick="clearDisplay()">C</button>
+  
+  <!-- Line 3: 4, 5, 6, BS -->
+  <button onclick="input('4')">4</button>
+  <button onclick="input('5')">5</button>
+  <button onclick="input('6')">6</button>
+  <button onclick="deleteLast()">BS</button>
+  
+  <!-- Line 4: 1, 2, 3, = -->
+  <button onclick="input('1')">1</button>
+  <button onclick="input('2')">2</button>
+  <button onclick="input('3')">3</button>
+  <button onclick="calculate()">=</button>
+  
+  <!-- Line 5: 0, ., blank, blank -->
+  <button onclick="input('0')">0</button>
+  <button onclick="input('.')">.</button>
+  <div class="empty-slot"></div>
+  <div class="empty-slot"></div>
+</div>
+
+<script>
+// character image・animation
+function changeCharacter(imageSrc) {
+  const img = document.getElementById("character-img");
+  img.src = imageSrc;
+
+  img.classList.remove("bounce");
+  void img.offsetWidth; // Animation reset caused by reflow
+  img.classList.add("bounce");
+}
+
+let current = "";
+
+// Settings for standard input
+const characterImages = {
+  "default": "a1.png",
+  "input": "a2.png"
+};
+
+const speeches = {
+  "0": "ゼロ！",
+  "1": "いち！",
+  "2": "に！",
+  "3": "さん！",
+  "4": "よん！",
+  "5": "ご！",
+  "6": "ろく！",
+  "7": "なな！",
+  "8": "はち！",
+  "9": "きゅう！",
+  ".": "てん！",
+  "+": "たす！",
+  "-": "ひく！",
+  "*": "かける！",
+  "/": "わる！",
+  ".": "てん！",
+  "bs": "1つ消しました！", 
+  "clear": "宇宙の神秘に迫ります！",
+  "default": "もっと計算したいです！"
+};
+
+// Character for primality testing＆lines（3 image）
+const primeCharacters = [
+  {
+    image: "a1.png",
+    speeches: [
+      "素数発見！",
+      "これは…割り切れない特別な数ですね！",
+      "素数の謎も知りたいです！"
+    ]
+  },
+  {
+    image: "a.png",
+    speeches: [
+      "素数の煌めきにも迫りたいです",
+      "割り切れない気持ち、まさに素数…?",
+      "素数にはタウマゼインを感じます"
+    ]
+  },
+  {
+    image: "r.png",
+    speeches: [
+      "自身と1でしか割れない孤高の数...",
+      "素数は星の謎にも通じているかもね",
+      "素数…今日はいいことがあるかな?"
+    ]
+  }
+];
+
+// A function to check whether a number is prime
+function isPrime(num) {
+  if (num <= 1 || !Number.isInteger(num)) return false;
+  if (num === 2) return true;
+  if (num % 2 === 0) return false;
+  for (let i = 3; i <= Math.sqrt(num); i += 2) {
+    if (num % i === 0) return false;
+  }
+  return true;
+}
+
+// Input processing
+function input(value) {
+  // Preventing duplicate decimal point entry
+  if (value === '.') {
+    const parts = current.split(/[\+\-\*\/]/);
+    const lastPart = parts[parts.length - 1];
+    if (lastPart.includes('.')) return;
+  }
+
+  current += value;
+  document.getElementById("display").textContent = current;
+  document.getElementById("speech").textContent = speeches[value] || speeches.default;
+  changeCharacter(characterImages.input);
+}
+
+// Clear processing
+function clearDisplay() {
+  current = "";
+  document.getElementById("display").textContent = "0";
+  document.getElementById("speech").textContent = speeches.clear;
+  changeCharacter(characterImages.default);
+}
+
+// Calculation execution process
+function calculate() {
+  try {
+    if (!current) return;
+    const result = eval(current.replace("×", "*").replace("÷", "/"));
+    
+    document.getElementById("display").textContent = result;
+    current = result.toString();
+
+    if (isPrime(result)) {
+      const randomChar = primeCharacters[Math.floor(Math.random() * primeCharacters.length)];
+      const randomSpeech = randomChar.speeches[Math.floor(Math.random() * randomChar.speeches.length)];
+
+      document.getElementById("speech").textContent = `${result}、 ${randomSpeech}`;
+      changeCharacter(randomChar.image);
+    } else {
+      document.getElementById("speech").textContent = `は ${result} です！`;
+      changeCharacter("a3.png");
+    }
+
+  } catch {
+    document.getElementById("speech").textContent = "あっ!エラーです!";
+    changeCharacter("a2.png");
+  }
+}
+
+// offline（Service Worker）registration script
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    const swCode = `
+      const CACHE_NAME = 'calc-app-v4';
+      self.addEventListener('install', (e) => {
+        e.waitUntil(self.skipWaiting());
+      });
+      self.addEventListener('activate', (e) => {
+        e.waitUntil(self.clients.claim());
+      });
+      self.addEventListener('fetch', (e) => {
+        e.respondWith(
+          caches.match(e.request).then((response) => {
+            return response || fetch(e.request).then((netRes) => {
+              return caches.open(CACHE_NAME).then((cache) => {
+                cache.put(e.request, netRes.clone());
+                return netRes;
+              });
+            });
+          }).catch(() => caches.match(e.request))
+        );
+      });
+    `;
+    const blob = new Blob([swCode], { type: 'text/javascript' });
+    const swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl).catch(err => console.log('SW setup error:', err));
+  });
+}
+
+// back space
+function deleteLast() {
+  if (current.length > 0) {
+    // Remove the last word of the string
+    current = current.slice(0, -1);
+    
+    // Refresh the screen after deletion,（Display "0" when empty）
+    document.getElementById("display").textContent = current || "0";
+    document.getElementById("speech").textContent = "1つ消しました！";
+    changeCharacter(characterImages.input);
+  }
+}
+
+</script>
+</body>
+</html>
