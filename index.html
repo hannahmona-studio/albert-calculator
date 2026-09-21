@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>アル君☆電卓</title>
   
+  <!-- PWA (Meta tags for "Add to Home Screen" & offline support -->
   <meta name="theme-color" content="#e0dad1">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -18,24 +19,32 @@
       touch-action: manipulation;
     }
 
-    body {
-      font-family: "Comic Sans MS", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
-      background: #e0dad1;
-      text-align: center;
-      margin: 0;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-    }
+body {
+  font-family: "Comic Sans MS", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+  
+  /* ★background */
+  background-image: url("p.png"); /* image file name */
+  background-repeat: repeat;                     /* Tile the image repeatedly both horizontally & vertically */
+  background-position: top left;                 /* Positioned based on the top-left corner */
+  background-size: 512px 512px;                  /* Display size of a single pattern on the screen */
+  background-color: #efece5;                     /* Base color used before an image loads or as the background color（Dark colors that suit zodiac etc） */
 
-    .calculator-container {
+  text-align: center;
+  margin: 0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+    .calculator-container  {
       width: 100%;
       max-width: 360px;
       margin: 0 auto;
-    }
+
+}
 
     .character {
       width: 180px;
@@ -44,7 +53,7 @@
       object-fit: contain;
       display: block;
       margin: 10px auto 0;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s ease, opacity 0.25s ease;
     }
 
     .character.bounce {
@@ -112,37 +121,45 @@
       margin: 0 auto;
     }
 
-    .buttons button {
-      width: 100%;
-      aspect-ratio: 1;
-      font-size: 20px;
-      font-weight: bold;
-      border: none;
-      background-color: #744847;
-      color: white;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding-top: 6px;
-      
-      -webkit-mask-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 5 L61 35 L95 38 L70 60 L78 95 L50 78 L22 95 L30 60 L5 38 L39 35 Z'/%3E%3C/svg%3E");
-      mask-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 5 L61 35 L95 38 L70 60 L78 95 L50 78 L22 95 L30 60 L5 38 L39 35 Z'/%3E%3C/svg%3E");
-      -webkit-mask-size: contain;
-      mask-size: contain;
-      -webkit-mask-repeat: no-repeat;
-      mask-repeat: no-repeat;
-      -webkit-mask-position: center;
-      mask-position: center;
-      
-      filter: drop-shadow(0 3px 0 #ff69b4);
-      transition: transform 0.1s ease;
-    }
+.buttons button {
+  width: 100%;
+  aspect-ratio: 1;
+  font-size: 22px;
+  font-weight: bold;
+  border: none;
+  background-color: #744847;
+  color: white;
+  cursor: pointer;
+
+  /* ★Vertical and horizontal centering settings */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* ★Character position adjustment：Increasing the top （padding-top） the text down */
+  padding-top: 10px; /* ← 8px〜14px Adjust using values */
+  padding-bottom: 0;
+
+  /* Star-shaped mask settings */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 5 L61 35 L95 38 L70 60 L78 95 L50 78 L22 95 L30 60 L5 38 L39 35 Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 5 L61 35 L95 38 L70 60 L78 95 L50 78 L22 95 L30 60 L5 38 L39 35 Z'/%3E%3C/svg%3E");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  
+  filter: drop-shadow(0 3px 0 #ff69b4);
+  transition: transform 0.1s ease, filter 0.1s ease;
+}
 
     .buttons button:active {
       transform: translateY(2px);
+      filter: drop-shadow(0 1px 0 #ff1493);
     }
 
+    /* Transparent dummy element for maintaining layout uniformity */
     .buttons .empty-slot {
       width: 100%;
       aspect-ratio: 1;
@@ -159,65 +176,108 @@
   
   <div class="display" id="display">0</div>
   
-  <div class="buttons">
-    <button onclick="input('+')">+</button>
-    <button onclick="input('-')">-</button>
-    <button onclick="input('/')">÷</button>
-    <button onclick="input('*')">×</button>
-    
-    <button onclick="input('7')">7</button>
-    <button onclick="input('8')">8</button>
-    <button onclick="input('9')">9</button>
-    <button onclick="clearDisplay()">C</button>
-    
-    <button onclick="input('4')">4</button>
-    <button onclick="input('5')">5</button>
-    <button onclick="input('6')">6</button>
-    <button onclick="deleteLast()">BS</button>
-    
-    <button onclick="input('1')">1</button>
-    <button onclick="input('2')">2</button>
-    <button onclick="input('3')">3</button>
-    <button onclick="calculate()">=</button>
-    
-    <button onclick="input('0')">0</button>
-    <button onclick="input('.')">.</button>
-    <div class="empty-slot"></div>
-    <div class="empty-slot"></div>
-  </div>
+<div class="buttons">
+  <!-- Line 1: +, -, ÷, × -->
+  <button onclick="input('+')">+</button>
+  <button onclick="input('-')">-</button>
+  <button onclick="input('/')">÷</button>
+  <button onclick="input('*')">×</button>
+  
+  <!-- Line 2: 7, 8, 9, C -->
+  <button onclick="input('7')">7</button>
+  <button onclick="input('8')">8</button>
+  <button onclick="input('9')">9</button>
+  <button onclick="clearDisplay()">C</button>
+  
+  <!-- Line 3: 4, 5, 6, BS -->
+  <button onclick="input('4')">4</button>
+  <button onclick="input('5')">5</button>
+  <button onclick="input('6')">6</button>
+  <button onclick="deleteLast()">BS</button>
+  
+  <!-- Line 4: 1, 2, 3, = -->
+  <button onclick="input('1')">1</button>
+  <button onclick="input('2')">2</button>
+  <button onclick="input('3')">3</button>
+  <button onclick="calculate()">=</button>
+  
+  <!-- Line 5: 0, ., blank, blank -->
+  <button onclick="input('0')">0</button>
+  <button onclick="input('.')">.</button>
+  <div class="empty-slot"></div>
+  <div class="empty-slot"></div>
 </div>
 
 <script>
-// 安全な画像切り替え関数（エラーがあっても止まらない保護付き）
+// character image・animation
 function changeCharacter(imageSrc) {
-  try {
-    const img = document.getElementById("character-img");
-    if (img) {
-      img.src = imageSrc;
-      img.classList.remove("bounce");
-      void img.offsetWidth;
-      img.classList.add("bounce");
-    }
-  } catch(e) {
-    console.log("画像切り替えスキップ:", e);
-  }
+  const img = document.getElementById("character-img");
+  img.src = imageSrc;
+
+  img.classList.remove("bounce");
+  void img.offsetWidth; // Animation reset caused by reflow
+  img.classList.add("bounce");
 }
 
 let current = "";
 
-const speeches = {
-  "0": "ゼロ！", "1": "いち！", "2": "に！", "3": "さん！", "4": "よん！",
-  "5": "ご！", "6": "ろく！", "7": "なな！", "8": "はち！", "9": "きゅう！",
-  ".": "てん！", "+": "たす！", "-": "ひく！", "*": "かける！", "/": "わる！",
-  "clear": "宇宙の神秘に迫ります！", "default": "もっと計算したいです！"
+// Settings for standard input
+const characterImages = {
+  "default": "a1.png",
+  "input": "a2.png"
 };
 
+const speeches = {
+  "0": "ゼロ！",
+  "1": "いち！",
+  "2": "に！",
+  "3": "さん！",
+  "4": "よん！",
+  "5": "ご！",
+  "6": "ろく！",
+  "7": "なな！",
+  "8": "はち！",
+  "9": "きゅう！",
+  ".": "てん！",
+  "+": "たす！",
+  "-": "ひく！",
+  "*": "かける！",
+  "/": "わる！",
+  ".": "てん！",
+  "bs": "1つ消しました！", 
+  "clear": "宇宙の神秘に迫ります！",
+  "default": "もっと計算したいです！"
+};
+
+// Character for primality testing＆lines（3 image）
 const primeCharacters = [
-  { image: "a1.png", speeches: ["すごーい！素数を発見しました！", "これは割り切れない特別な数「素数」です！"] },
-  { image: "a.png", speeches: ["素数ですね！神秘的な数字です！", "自分と1でしか割れない孤高の数...素数！"] },
-  { image: "r.png", speeches: ["素数検出！ナイス計算です！", "素数発見！今日はいいことありそうです！"] }
+  {
+    image: "a1.png",
+    speeches: [
+      "素数発見！",
+      "割り切れない特別な数！",
+      "素数の謎も知りたいです！"
+    ]
+  },
+  {
+    image: "a.png",
+    speeches: [
+      "素数の煌めきにも迫りたいです",
+      "割り切れない気持ち…",
+      "素数にはタウマゼインを感じます"
+    ]
+  },
+  {
+    image: "r.png",
+    speeches: [
+      "自身と1でしか割れない孤高の数…",
+      "素数は星の謎にも通じているかもね",
+      "素数…いいことがあるかな?"
+    ]
+  }
 ];
 
+// A function to check whether a number is prime
 function isPrime(num) {
   if (num <= 1 || !Number.isInteger(num)) return false;
   if (num === 2) return true;
@@ -228,96 +288,98 @@ function isPrime(num) {
   return true;
 }
 
+// Input processing
 function input(value) {
+  // Preventing duplicate decimal point entry
   if (value === '.') {
     const parts = current.split(/[\+\-\*\/]/);
-    if (parts[parts.length - 1].includes('.')) return;
+    const lastPart = parts[parts.length - 1];
+    if (lastPart.includes('.')) return;
   }
+
   current += value;
   document.getElementById("display").textContent = current;
   document.getElementById("speech").textContent = speeches[value] || speeches.default;
-  changeCharacter("a2.png");
+  changeCharacter(characterImages.input);
 }
 
+// Clear processing
 function clearDisplay() {
   current = "";
   document.getElementById("display").textContent = "0";
   document.getElementById("speech").textContent = speeches.clear;
-  changeCharacter("a1.png");
+  changeCharacter(characterImages.default);
 }
 
-function deleteLast() {
-  if (current.length > 0) {
-    current = current.slice(0, -1);
-    document.getElementById("display").textContent = current || "0";
-    document.getElementById("speech").textContent = "1つ消しました！";
+// Calculation execution process
+function calculate() {
+  try {
+    if (!current) return;
+    const result = eval(current.replace("×", "*").replace("÷", "/"));
+    
+    document.getElementById("display").textContent = result;
+    current = result.toString();
+
+    if (isPrime(result)) {
+      const randomChar = primeCharacters[Math.floor(Math.random() * primeCharacters.length)];
+      const randomSpeech = randomChar.speeches[Math.floor(Math.random() * randomChar.speeches.length)];
+
+      document.getElementById("speech").textContent = `${result}、 ${randomSpeech}`;
+      changeCharacter(randomChar.image);
+    } else {
+      document.getElementById("speech").textContent = `は ${result} です！`;
+      changeCharacter("a3.png");
+    }
+
+  } catch {
+    document.getElementById("speech").textContent = "あっ!エラーです!";
     changeCharacter("a2.png");
   }
 }
 
-function calculate() {
-  if (!current) return;
-  
-  if (/[\+\-\*\/]$/.test(current)) {
-    document.getElementById("speech").textContent = "式を完成させてね！";
-    return;
-  }
-
-  // ★安全な計算ロジック
-  const tokens = current.match(/(\d+\.?\d*|[\+\-\*\/])/g);
-  if (!tokens) return;
-
-  // 掛け算・割り算
-  let work = [];
-  let i = 0;
-  while (i < tokens.length) {
-    if (tokens[i] === '*' || tokens[i] === '/') {
-      let prev = parseFloat(work.pop());
-      let next = parseFloat(tokens[i+1]);
-      let res = tokens[i] === '*' ? prev * next : prev / next;
-      work.push(res);
-      i += 2;
-    } else {
-      work.push(tokens[i]);
-      i++;
-    }
-  }
-
-  // 足し算・引き算
-  let total = parseFloat(work[0]);
-  for (let j = 1; j < work.length; j += 2) {
-    let op = work[j];
-    let val = parseFloat(work[j+1]);
-    if (op === '+') total += val;
-    if (op === '-') total -= val;
-  }
-
-  // 小数の誤差丸め処理
-  const roundedResult = Math.round(total * 100000000) / 100000000;
-
-  document.getElementById("display").textContent = roundedResult;
-  current = roundedResult.toString();
-
-  // 素数判定＆メッセージ出力
-  if (isPrime(roundedResult)) {
-    const charData = primeCharacters[Math.floor(Math.random() * primeCharacters.length)];
-    const speechText = charData.speeches[Math.floor(Math.random() * charData.speeches.length)];
-    document.getElementById("speech").textContent = `${roundedResult} は ${speechText}`;
-    changeCharacter(charData.image);
-  } else {
-    document.getElementById("speech").textContent = `答えは ${roundedResult} です！`;
-    changeCharacter("a3.png");
-  }
-}
-
-// サービスワーカー（sw.js）の登録
+// offline（Service Worker）registration script
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('SW Registered'))
-      .catch(err => console.log('SW Register Error', err));
+    const swCode = `
+      const CACHE_NAME = 'calc-app-v4';
+      self.addEventListener('install', (e) => {
+        e.waitUntil(self.skipWaiting());
+      });
+      self.addEventListener('activate', (e) => {
+        e.waitUntil(self.clients.claim());
+      });
+      self.addEventListener('fetch', (e) => {
+        e.respondWith(
+          caches.match(e.request).then((response) => {
+            return response || fetch(e.request).then((netRes) => {
+              return caches.open(CACHE_NAME).then((cache) => {
+                cache.put(e.request, netRes.clone());
+                return netRes;
+              });
+            });
+          }).catch(() => caches.match(e.request))
+        );
+      });
+    `;
+    const blob = new Blob([swCode], { type: 'text/javascript' });
+    const swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl).catch(err => console.log('SW setup error:', err));
   });
 }
+
+// back space
+function deleteLast() {
+  if (current.length > 0) {
+    // Remove the last word of the string
+    current = current.slice(0, -1);
+    
+    // Refresh the screen after deletion,（Display "0" when empty）
+    document.getElementById("display").textContent = current || "0";
+    document.getElementById("speech").textContent = "1つ消しました！";
+    changeCharacter(characterImages.input);
+  }
+}
+
 </script>
 </body>
 </html>
